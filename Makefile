@@ -39,7 +39,7 @@ LIBDIR=$(PREFIX)/lib
 # lib name 
 LIB=libArduiPi_OLED
 # shared library name
-LIBNAME=$(LIB).so.1.0
+LIBNAME=$(LIB).a
 
 # make all
 # reinstall the library after each recompilation
@@ -47,7 +47,8 @@ all: ArduiPi_OLED
 
 # Make the library
 ArduiPi_OLED: ArduiPi_OLED.o Adafruit_GFX.o bcm2835.o Wrapper.o
-	g++ -shared -Wl,-soname,$@.so.1 ${CCFLAGS}  -o ${LIBNAME} $^
+	ar rc ${LIBNAME} $^
+	ranlib ${LIBNAME}
 
 # Library parts (use -fno-rtti flag to avoid link problem)
 ArduiPi_OLED.o: ArduiPi_OLED.cpp
@@ -66,11 +67,7 @@ Wrapper.o: Wrapper.cpp
 install: 
 	@echo "[Install Library]"
 	@if ( test ! -d $(PREFIX)/lib ) ; then mkdir -p $(PREFIX)/lib ; fi
-	@install -m 0755 ${LIBNAME} ${LIBDIR}
-	@ln -sf ${LIBDIR}/${LIBNAME} ${LIBDIR}/${LIB}.so.1
-	@ln -sf ${LIBDIR}/${LIBNAME} ${LIBDIR}/${LIB}.so
-	@ldconfig
-	@rm -rf ${LIB}.*
+	@install -m 0644 ${LIBNAME} ${LIBDIR}
 
 	@echo "[Install Headers]"
 	@if ( test ! -d $(PREFIX)/include ) ; then mkdir -p $(PREFIX)/include ; fi
