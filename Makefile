@@ -27,7 +27,7 @@ ifeq ($(HWPLAT),BananaPI)
 	CCFLAGS=-Wall -Ofast -mfpu=vfpv4 -mfloat-abi=hard -march=armv7 -mtune=cortex-a7 -DBANANAPI
 else # fallback to raspberry
 	# The recommended compiler flags for the Raspberry Pi
-	CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s
+	CCFLAGS+=-Ofast -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s
 endif
 
 # Where you want it installed when you do 'make install'
@@ -47,21 +47,21 @@ all: ArduiPi_OLED
 
 # Make the library
 ArduiPi_OLED: ArduiPi_OLED.o Adafruit_GFX.o bcm2835.o Wrapper.o
-	ar rc ${LIBNAME} $^
-	ranlib ${LIBNAME}
+	$(AR) rc ${LIBNAME} $^
+	$(RANLIB) ${LIBNAME}
 
 # Library parts (use -fno-rtti flag to avoid link problem)
 ArduiPi_OLED.o: ArduiPi_OLED.cpp
-	g++ -Wall -fPIC -fno-rtti ${CCFLAGS} -c $^
+	$(CXX) -Wall -fPIC -fno-rtti ${CCFLAGS} -c $^
 
 Adafruit_GFX.o: Adafruit_GFX.cpp
-	g++ -Wall -fPIC -fno-rtti ${CCFLAGS} -c $^
+	$(CXX) -Wall -fPIC -fno-rtti ${CCFLAGS} -c $^
 
 bcm2835.o: bcm2835.c
-	gcc -Wall -fPIC ${CCFLAGS} -c $^
+	$(CC) -Wall -fPIC ${CCFLAGS} -c $^
 
 Wrapper.o: Wrapper.cpp
-	gcc -Wall -fPIC ${CCFLAGS} -c $^
+	$(CC) -Wall -fPIC ${CCFLAGS} -c $^
 
 # Install the library to LIBPATH
 install: 
